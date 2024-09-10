@@ -39,6 +39,10 @@ def register():
     tkmb.showinfo("Success", success_message)
     clear_fields()
 
+def clear_fields():
+    username_entry.delete(0, tk.END)
+    password_entry.delete(0, tk.END)
+
 def login():
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
