@@ -2,6 +2,8 @@ import customtkinter as ctk
 import tkinter.messagebox as tkmb
 import sqlite3
 import tkinter as tk
+import os
+import subprocess
 
 def init_db():
     conn = sqlite3.connect('users.db')
@@ -12,32 +14,9 @@ def init_db():
                        username TEXT UNIQUE,
                        password TEXT,
                        role INTEGER)''')
-
     
     conn.commit()
     conn.close()
-
-def register():
-    conn = sqlite3.connect('users.db')
-    cursor = conn.cursor()
-    
-    entered_username = username_entry.get()
-    entered_password = password_entry.get()
-
-    if not entered_username or not entered_password:
-        error_message = "Please enter both username, password, and select a role."
-        tkmb.showerror("Error", error_message)
-        return
-
-    cursor.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", 
-                  (entered_username, entered_password, 1))
-    
-    conn.commit()
-    conn.close()
-
-    success_message = f"User '{entered_username}' registered successfully!"
-    tkmb.showinfo("Success", success_message)
-    clear_fields()
 
 def clear_fields():
     username_entry.delete(0, tk.END)
@@ -68,7 +47,7 @@ def login():
 def success_window(user_id, user_role):
     new_window = ctk.CTkToplevel(app)
     new_window.title(f"Login Successful - User {user_id}")
-    new_window.geometry("350x150")
+    new_window.geometry("350x200")
 
     label = ctk.CTkLabel(new_window, text=f"Welcome, User {user_id}!")
     label.pack(pady=20)
@@ -80,8 +59,34 @@ def success_window(user_id, user_role):
     role_display = ctk.CTkLabel(new_window, text=f"{role_value}")
     role_display.pack(pady=5)
 
-    close_button = ctk.CTkButton(new_window, text="Close", command=new_window.destroy)
+    close_button = ctk.CTkButton(new_window, text="Close", command=lambda: [new_window.destroy(), open_text_editor()])
     close_button.pack(pady=10)
+
+def open_text_editor():
+    os.system(f"python {os.path.join(os.getcwd(), 'TextEditor.py')}")
+
+def register():
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    
+    entered_username = username_entry.get()
+    entered_password = password_entry.get()
+
+    if not entered_username or not entered_password:
+        error_message = "Please enter both username, password, and select a role."
+        tkmb.showerror("Error", error_message)
+        return
+
+    cursor.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", 
+                  (entered_username, entered_password, 1))
+    
+    conn.commit()
+    conn.close()
+
+    success_message = f"User '{entered_username}' registered successfully!"
+    tkmb.showinfo("Success", success_message)
+    clear_fields()
+
 
 # Initialize the database
 init_db()
