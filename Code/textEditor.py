@@ -70,6 +70,14 @@ def insert_predefined_text(event):
         item_text = listbox_right.get(selected_item)
         text_editor.insert(ctk.INSERT, item_text)
 
+# Example function to use the text editor content
+def use_text_editor_content():
+    content = text_editor.get("1.0", ctk.END).strip()
+    if content:
+        messagebox.showinfo("Text Editor Content", f"Content:\n{content}")
+    else:
+        messagebox.showwarning("Warning", "The text editor is empty.")
+
 # Left Frame
 frame_left = ctk.CTkFrame(app, width=200, corner_radius=10)
 frame_left.pack(side=ctk.LEFT, fill=ctk.Y, padx=10, pady=10)
@@ -106,6 +114,10 @@ listbox_right.bind('<Double-1>', insert_predefined_text)
 predefined_texts = ["Hello, World!", "CustomTkinter is great!", "Python is awesome!"]
 for text in predefined_texts:
     listbox_right.insert(END, text)
+
+# Button to use the text editor content
+button_use_content = ctk.CTkButton(app, text="Use Text Content", command=use_text_editor_content)
+button_use_content.pack(pady=10, padx=10)
 
 # Run the application
 app.mainloop()
